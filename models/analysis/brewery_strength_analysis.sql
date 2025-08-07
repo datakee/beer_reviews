@@ -7,18 +7,7 @@ with beer_data as (
 ),
 
 brewery_abv_stats as (
-    select 
-        brewery_name,
-        count(*) as total_beers,
-        avg(beer_abv) as avg_abv,
-        max(beer_abv) as max_abv,
-        min(beer_abv) as min_abv,
-        stddev(beer_abv) as stddev_abv
-    from beer_data
-    where beer_abv is not null
-      and beer_abv > 0  -- Filter out invalid ABV values
-    group by brewery_name
-    having count(*) >= 5  -- Only breweries with at least 5 beers for statistical significance
+    select * from {{ ref('int_brewery_abv_stats') }}
 ),
 
 brewery_rankings as (

@@ -1,0 +1,63 @@
+version: 2
+
+models:
+  # Staging Models
+  - name: stg_beer_reviews
+    description: "Cleaned and standardized beer reviews data from raw source"
+    columns:
+      - name: beer_name
+        description: "Name of the beer"
+        tests:
+          - not_null
+      - name: brewery_name
+        description: "Name of the brewery that produced the beer"
+        tests:
+          - not_null
+      - name: review_overall
+        description: "Overall review score (1-5 scale)"
+        tests:
+          - not_null
+      - name: review_aroma
+        description: "Aroma rating (1-5 scale)"
+      - name: review_appearance
+        description: "Appearance rating (1-5 scale)"
+      - name: review_palate
+        description: "Palate/mouthfeel rating (1-5 scale)"
+      - name: review_taste
+        description: "Taste rating (1-5 scale)"
+      - name: beer_style
+        description: "Style/category of the beer"
+      - name: beer_abv
+        description: "Alcohol by volume percentage"
+        tests:
+          - not_null
+      - name: review_time
+        description: "Timestamp when the review was submitted"
+
+  # Analysis Models
+  - name: brewery_strength_analysis
+    description: "Analysis of breweries ranked by beer strength (ABV%)"
+    columns:
+      - name: brewery_name
+        description: "Name of the brewery"
+        tests:
+          - not_null
+          - unique
+      - name: total_beers
+        description: "Total number of beers from this brewery in dataset"
+        tests:
+          - not_null
+      - name: avg_abv
+        description: "Average ABV across all beers from this brewery"
+        tests:
+          - not_null
+      - name: max_abv
+        description: "Highest ABV beer from this brewery"
+      - name: min_abv
+        description: "Lowest ABV beer from this brewery"
+      - name: stddev_abv
+        description: "Standard deviation of ABV for this brewery"
+      - name: rank_by_avg_abv
+        description: "Rank of brewery by average ABV (1 = highest)"
+      - name: rank_by_max_abv
+        description: "Rank of brewery by maximum ABV (1 = highest)" 
