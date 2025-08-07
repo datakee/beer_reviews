@@ -1,0 +1,31 @@
+version: 2
+
+sources:
+  - name: beer_reviews_raw
+    description: "Raw beer reviews data from the case study dataset"
+    database: BEER_REVIEWS_RAW
+    schema: PUBLIC
+    tables:
+      - name: beer_reviews_raw
+        description: "Raw beer reviews table with all original columns"
+        columns:
+          - name: beer_name
+            description: "Name of the beer"
+          - name: brewery_name
+            description: "Name of the brewery"
+          - name: review_overall
+            description: "Overall review score"
+          - name: review_aroma
+            description: "Aroma rating"
+          - name: review_appearance
+            description: "Appearance rating"
+          - name: review_palate
+            description: "Palate rating"
+          - name: review_taste
+            description: "Taste rating"
+          - name: beer_style
+            description: "Style of the beer"
+          - name: beer_abv
+            description: "Alcohol by volume percentage"
+          - name: review_time
+            description: "Timestamp of the review" 
