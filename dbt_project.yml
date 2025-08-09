@@ -41,10 +41,11 @@ models:
     analysis:
       +materialized: table
       +schema: analytics
-      # Python model configuration
-      feature_importance_regression:
+      # Python models subdirectory
+      python:
         +materialized: table
         +language: python
+        +schema: analytics
     
     # Remove example models
     example:
