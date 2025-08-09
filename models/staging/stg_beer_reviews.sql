@@ -15,7 +15,8 @@ cleaned_data as (
         review_taste,
         beer_style,
         beer_abv,
-        review_time
+        review_time,
+        TO_TIMESTAMP(review_time) as review_datetime
     from source_data
     where beer_name is not null
       and brewery_name is not null

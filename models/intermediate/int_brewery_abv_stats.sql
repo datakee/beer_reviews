@@ -3,7 +3,8 @@
 with brewery_abv_stats as (
     select 
         brewery_name,
-        count(*) as total_beers,
+        count(*) as total_reviews,
+        count(distinct beer_name) as distinct_beers,
         avg(beer_abv) as avg_abv,
         max(beer_abv) as max_abv,
         min(beer_abv) as min_abv,
@@ -15,3 +16,5 @@ with brewery_abv_stats as (
     having count(*) >= 5)  -- Only breweries with at least 5 beers for statistical significance
 
 select * from brewery_abv_stats
+--where avg_abv < 18
+order by avg_abv desc

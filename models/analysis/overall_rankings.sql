@@ -1,48 +1,72 @@
 {{ config(materialized='table') }}
 
-with balanced_excellence as (
-    select
+with review_counts as (
+    select 
         beer_name,
-        beer_style,
         brewery_name,
-        balanced_rank as rank,
-        'balanced_excellence' as ranking_method
-    from {{ ref('int_reco_balanced_excellence') }}
-    where balanced_rank in (1,2,3,4,5)
+        COUNT(*) as review_count
+    from {{ ref('stg_beer_reviews') }}
+    group by 1, 2
+),
+
+balanced_excellence as (
+    select
+        be.beer_name,
+        be.beer_style,
+        be.brewery_name,
+        be.balanced_rank as rank,
+        'balanced_excellence' as ranking_method,
+        rc.review_count
+    from {{ ref('int_reco_balanced_excellence') }} be
+    left join review_counts rc 
+        on be.beer_name = rc.beer_name 
+        and be.brewery_name = rc.brewery_name
+    where be.balanced_rank in (1,2,3,4,5)
 ),
 
 high_overall_rating as (
     select
-        beer_name,
-        beer_style,
-        brewery_name,
-        overall_rank as rank,
-        'highest_overall' as ranking_method
-    from {{ ref('int_reco_highest_overall') }}
-    where overall_rank in (1,2,3,4,5)
+        ho.beer_name,
+        ho.beer_style,
+        ho.brewery_name,
+        ho.overall_rank as rank,
+        'highest_overall' as ranking_method,
+        rc.review_count
+    from {{ ref('int_reco_highest_overall') }} ho
+    left join review_counts rc 
+        on ho.beer_name = rc.beer_name 
+        and ho.brewery_name = rc.brewery_name
+    where ho.overall_rank in (1,2,3,4,5)
 ),
 
 diversity_ranking as (
     select
-        beer_name,
-        beer_style,
-        brewery_name,
-        diversity_rank as rank,
-        'style_diversity' as ranking_method
-
-    from {{ ref('int_reco_style_diversity') }}
-    where diversity_rank in (1,2,3,4,5)
+        dr.beer_name,
+        dr.beer_style,
+        dr.brewery_name,
+        dr.diversity_rank as rank,
+        'style_diversity' as ranking_method,
+        rc.review_count
+    from {{ ref('int_reco_style_diversity') }} dr
+    left join review_counts rc 
+        on dr.beer_name = rc.beer_name 
+        and dr.brewery_name = rc.brewery_name
+    where dr.diversity_rank in (1,2,3,4,5)
 ),
 
 statistical_confidence_ranking as (
     select
-        beer_name,
-        beer_style,
-        brewery_name,
-        confidence_rank as rank,
-        'statistical_confidence' as ranking_method
-    from {{ ref('int_reco_statistical_confidence') }}
-    where confidence_rank in (1,2,3,4,5)
+        sc.beer_name,
+        sc.beer_style,
+        sc.brewery_name,
+        sc.confidence_rank as rank,
+        'statistical_confidence' as ranking_method,
+        rc.review_count
+    from {{ ref('int_reco_statistical_confidence') }} sc
+    left join review_counts rc 
+        on sc.beer_name = rc.beer_name 
+        and sc.brewery_name = rc.brewery_name
+    where sc.confidence_rank in (1,2,3,4,5)
 )
 
 select * from balanced_excellence
@@ -52,5 +76,5 @@ union all
 select * from diversity_ranking
 union all
 select * from statistical_confidence_ranking
-order by 5,4
+order by ranking_method, rank
 
