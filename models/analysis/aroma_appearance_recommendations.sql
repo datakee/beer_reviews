@@ -10,6 +10,7 @@ METHODOLOGY:
 1. Calculate average aroma and appearance ratings by beer style
 2. Rank by simple combined aroma + appearance score
 3. Require minimum sample size for statistical reliability
+4. Add market opportunity sizing for portfolio strategy
 */
 
 with beer_data as (
@@ -71,6 +72,18 @@ final_recommendations as (
         aroma_rank,
         appearance_rank,
         combined_rank,
+        
+        -- Market opportunity sizing
+        total_reviews as market_opportunity_size,
+        round(total_reviews / sum(total_reviews) over(), 4) as pct_of_reviews,
+        ntile(4) over (order by total_reviews) as market_size_quartile,
+        case 
+            when total_reviews >= 10000 then 'LARGE_MARKET'
+            when total_reviews >= 5000 then 'MEDIUM_MARKET'
+            when total_reviews >= 1000 then 'SMALL_MARKET'
+            else 'NICHE_MARKET'
+        end as market_size_category,
+        
         -- Use simple combined score for final ranking
         row_number() over (order by combined_aroma_appearance_score desc) as final_recommendation_rank,
         case
@@ -79,7 +92,23 @@ final_recommendations as (
             when row_number() over (order by combined_aroma_appearance_score desc) <= 10
             then 'RECOMMENDED'
             else 'CONSIDER'
-        end as recommendation_category
+        end as recommendation_category,
+        
+        -- Portfolio strategy classification
+        case 
+            -- High quality + large market = safe, profitable core holdings
+            when row_number() over (order by combined_aroma_appearance_score desc) <= 5 
+                 and total_reviews >= 10000 then 'CORE_PORTFOLIO'
+            -- High quality + small market = low-volume, high-margin specialty offerings
+            when row_number() over (order by combined_aroma_appearance_score desc) <= 5 
+                 and total_reviews < 1000 then 'PREMIUM_SPECIALTY'
+            -- Large market + average quality = high-volume, mass-appeal products
+            when total_reviews >= 10000 then 'VOLUME_PLAY'
+            -- Medium market = growth potential with manageable competition
+            when total_reviews >= 5000 then 'GROWTH_OPPORTUNITY'
+            -- Small market + average quality = limited strategic value
+            else 'NICHE_OPPORTUNITY'
+        end as portfolio_strategy
     from style_rankings
 )
 

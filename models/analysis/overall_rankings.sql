@@ -1,7 +1,7 @@
 {{ config(materialized='table') }}
 
 with review_counts as (
-    select 
+    select
         beer_name,
         brewery_name,
         COUNT(*) as review_count
@@ -16,7 +16,12 @@ balanced_excellence as (
         be.brewery_name,
         be.balanced_rank as rank,
         'balanced_excellence' as ranking_method,
-        rc.review_count
+        rc.review_count,
+        case 
+            when be.beer_name in ('Rare D.O.S.', 'Veritas 005', 'Dirty Horse') then 'Premium Portfolio'
+            when be.beer_name in ('Pliny the Elder', 'Weihenstephaner Hefeweissbier', 'Two Hearted Ale') then 'Core Portfolio'
+            else 'Other'
+        end as portfolio_category
     from {{ ref('int_reco_balanced_excellence') }} be
     left join review_counts rc 
         on be.beer_name = rc.beer_name 
@@ -31,7 +36,12 @@ high_overall_rating as (
         ho.brewery_name,
         ho.overall_rank as rank,
         'highest_overall' as ranking_method,
-        rc.review_count
+        rc.review_count,
+        case 
+            when ho.beer_name in ('Rare D.O.S.', 'Veritas 005', 'Dirty Horse') then 'Premium Portfolio'
+            when ho.beer_name in ('Pliny the Elder', 'Weihenstephaner Hefeweissbier', 'Two Hearted Ale') then 'Core Portfolio'
+            else 'Other'
+        end as portfolio_category
     from {{ ref('int_reco_highest_overall') }} ho
     left join review_counts rc 
         on ho.beer_name = rc.beer_name 
@@ -46,7 +56,12 @@ diversity_ranking as (
         dr.brewery_name,
         dr.diversity_rank as rank,
         'style_diversity' as ranking_method,
-        rc.review_count
+        rc.review_count,
+        case 
+            when dr.beer_name in ('Rare D.O.S.', 'Veritas 005', 'Dirty Horse') then 'Premium Portfolio'
+            when dr.beer_name in ('Pliny the Elder', 'Weihenstephaner Hefeweissbier', 'Two Hearted Ale') then 'Core Portfolio'
+            else 'Other'
+        end as portfolio_category
     from {{ ref('int_reco_style_diversity') }} dr
     left join review_counts rc 
         on dr.beer_name = rc.beer_name 
@@ -61,7 +76,12 @@ statistical_confidence_ranking as (
         sc.brewery_name,
         sc.confidence_rank as rank,
         'statistical_confidence' as ranking_method,
-        rc.review_count
+        rc.review_count,
+        case 
+            when sc.beer_name in ('Rare D.O.S.', 'Veritas 005', 'Dirty Horse') then 'Premium Portfolio'
+            when sc.beer_name in ('Pliny The Elder', 'Weihenstephaner Hefeweissbier', 'Two Hearted Ale') then 'Core Portfolio'
+            else 'Other'
+        end as portfolio_category
     from {{ ref('int_reco_statistical_confidence') }} sc
     left join review_counts rc 
         on sc.beer_name = rc.beer_name 
