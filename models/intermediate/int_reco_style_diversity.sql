@@ -1,56 +1,5 @@
 {{ config(materialized='view') }}
 
-/*
-RECOMMENDATION STRATEGY: Style Diversity & Exploration
-
-METHODOLOGY:
-This model ensures recommendation diversity by selecting the top-rated beer from 
-different beer styles, providing variety in the final recommendation set. Rather 
-than potentially recommending 3 similar IPAs or stouts, this approach guarantees 
-exposure to different flavor profiles and brewing traditions.
-
-BUSINESS LOGIC:
-- Identifies the highest-rated beer within each beer style category
-- Ranks styles by the quality of their top representative beer
-- Selects top 3 beers ensuring each represents a different style
-- Uses composite scoring across multiple dimensions for style champions
-- Balances style representation with overall quality
-
-TARGET AUDIENCE:
-Perfect for adventurous beer drinkers who want to explore different styles and 
-flavor profiles, or for creating diverse beer flights and tasting experiences
-
-PROS:
-- Guarantees variety and prevents style bias in recommendations
-- Introduces customers to different beer categories they might not normally try
-- Great for educational purposes and expanding palates
-- Reduces risk of recommending overly similar beers
-- Excellent for gift recommendations when recipient preferences are unknown
-
-CONS:
-- May sacrifice some absolute quality for diversity goals
-- The "best" beer overall might not be recommended if its style is beaten by another
-- More complex to explain than single-metric approaches
-- Style categorization might not align with personal taste preferences
-- Could recommend a style that customer dislikes even if it's objectively excellent
-
-SELECTION PROCESS:
-1. Calculate overall ratings and composite scores for all beers
-2. Rank beers within each style (partition by beer_style)
-3. Select only the #1 beer from each style (style_rank = 1)
-4. Rank these style champions by overall quality
-5. Select top 3 style champions as final recommendations
-
-RANKING METHODOLOGY:
-- Within Style: avg_overall_rating DESC, review_count DESC
-- Across Styles: avg_overall_rating DESC, composite_score DESC, review_count DESC
-
-VALIDATION CRITERIA:
-- Minimum 10 reviews per beer for reliability
-- Each recommendation must represent a different beer style
-- Style champions selected based on multiple quality dimensions
-*/
-
 with beer_ratings as (
     select * from {{ ref('stg_beer_reviews') }}
 ),

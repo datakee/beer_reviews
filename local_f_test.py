@@ -74,16 +74,32 @@ def get_monthly_raw_data(conn):
         return None
 
 def perform_f_test(raw_data):
-    """Perform F-test (ANOVA) on monthly ratings"""
+    """
+    Perform F-test (ANOVA) on monthly ratings
+    
+    STATISTICAL TEST EXPLANATION:
+    The F-test (Analysis of Variance) tests the null hypothesis that all monthly groups 
+    have the same mean rating. If p < 0.05, we reject the null hypothesis and conclude 
+    that there are statistically significant differences between months (seasonality exists).
+    
+    METHOD:
+    - Groups all individual beer ratings by month (1-12)
+    - Compares variance BETWEEN months vs variance WITHIN months
+    - High F-statistic = more variance between months than within = seasonality
+    - Low p-value (< 0.05) = seasonality is statistically significant (likelihood of random chance is low)
+    """
     try:
-        # Group ratings by month - use uppercase column names
+        # GROUP DATA BY MONTH: Create 12 separate arrays of ratings (one per month)
+        # This is where we prepare the data for the F-test
         month_groups = [group['RATING'].values for name, group in raw_data.groupby('MONTH')]
         
-        # Perform F-test
+        # F-TEST EXECUTION: This is the actual statistical test
+        # scipy.stats.f_oneway() performs one-way ANOVA comparing all 12 monthly groups
+        # Returns: F-statistic (ratio of between-group to within-group variance) and p-value
         f_statistic, p_value = stats.f_oneway(*month_groups)
         
-        # Interpretation
-        is_significant = p_value < 0.05
+        # STATISTICAL INTERPRETATION: Convert test results to business conclusion
+        is_significant = p_value < 0.05  # Standard significance threshold
         significance_level = "SIGNIFICANT" if is_significant else "NOT SIGNIFICANT"
         
         print("\n" + "="*50)
