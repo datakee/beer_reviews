@@ -14,7 +14,8 @@ with top_styles as (
         beer_style,
         final_recommendation_rank
     from {{ ref('aroma_appearance_recommendations') }}
-    where final_recommendation_rank <= 2
+    --where final_recommendation_rank <= 3
+    where beer_style = 'American Double / Imperial IPA'
 ),
 
 beer_performance as (
@@ -73,4 +74,4 @@ from ranked_beers
 where rank_within_style <= 5  -- Top 5 beers per style
 order by beer_style, rank_within_style)
 
-select * final
+select * from final
