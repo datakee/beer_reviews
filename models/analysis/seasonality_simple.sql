@@ -1,3 +1,5 @@
+-- Aggregates reviews by month, year, 
+--and beer style for basic seasonality exploration in Tableau.
 {{ config(materialized='table') }}
 
 -- Simple seasonality analysis: monthly aggregations by beer style

@@ -1,3 +1,5 @@
+-- Combines regression results from top 1, strong, 
+-- and regular beer segments for comparison analysis.
 {{ config(materialized='table') }}
 
 with top_1_results as (

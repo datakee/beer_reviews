@@ -1,3 +1,5 @@
+-- Performs multiple linear regression to determine 
+-- which rating components most significantly affect overall beer ratings.
 {{ config(materialized='table') }}
 
 /*

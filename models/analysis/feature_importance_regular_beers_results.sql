@@ -1,3 +1,5 @@
+-- Selects regression results for regular 
+-- beers to show feature importance in standard beer styles.
 {{ config(materialized='table') }}
 
 with feature_results as (

@@ -1,3 +1,5 @@
+-- Selects regression results for the top 1 
+--beer style to show feature importance in popular styles.
 {{ config(materialized='table') }}
 
 with feature_results as (

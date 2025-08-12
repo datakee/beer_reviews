@@ -1,3 +1,5 @@
+-- Ranks beer styles by aroma and appearance scores with market 
+-- opportunity sizing and portfolio strategy classification.
 {{ config(materialized='table') }}
 
 with beer_data as (

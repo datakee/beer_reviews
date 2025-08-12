@@ -1,3 +1,5 @@
+-- Provides multiple beer recommendation strategies including highest rated, 
+-- balanced excellence, statistical confidence, and style diversity approaches.
 {{ config(materialized='table') }}
 
 with review_counts as (

@@ -1,3 +1,5 @@
+-- Selects regression results for strong beers (ABV > 10%) 
+-- to show feature importance in high-alcohol styles.
 {{ config(materialized='table') }}
 
 with feature_results as (

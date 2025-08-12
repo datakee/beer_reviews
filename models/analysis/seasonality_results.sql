@@ -1,11 +1,5 @@
 {{ config(materialized='table') }}
 
-/*
-SEASONALITY RESULTS: All decomposition data for visualization
-
-Simple pass-through of seasonality decomposition results
-Filter by chart_type in Tableau for different views
-*/
-
+-- Selects results from the seasonality decomposition analysis for visualization.
 select *
 from {{ ref('seasonality_decomposition') }} 
