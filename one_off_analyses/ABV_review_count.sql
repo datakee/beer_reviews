@@ -1,6 +1,5 @@
 /*
 ONE-OFF ANALYSIS: Review Count by ABV Buckets
-
 Counts total reviews for different ABV strength categories
 */
 

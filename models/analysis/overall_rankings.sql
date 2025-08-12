@@ -4,7 +4,8 @@ with review_counts as (
     select
         beer_name,
         brewery_name,
-        COUNT(*) as review_count
+        COUNT(*) as review_count,
+        AVG(review_overall) as avg_overall_rating
     from {{ ref('stg_beer_reviews') }}
     group by 1, 2
 ),
@@ -17,6 +18,7 @@ balanced_excellence as (
         be.balanced_rank as rank,
         'balanced_excellence' as ranking_method,
         rc.review_count,
+        round(rc.avg_overall_rating, 3) as avg_overall_rating,
         case 
             when be.beer_name in ('Rare D.O.S.', 'Veritas 005', 'Dirty Horse') then 'Premium Portfolio'
             when be.beer_name in ('Pliny the Elder', 'Weihenstephaner Hefeweissbier', 'Two Hearted Ale') then 'Core Portfolio'
@@ -37,6 +39,7 @@ high_overall_rating as (
         ho.overall_rank as rank,
         'highest_overall' as ranking_method,
         rc.review_count,
+        round(rc.avg_overall_rating, 3) as avg_overall_rating,
         case 
             when ho.beer_name in ('Rare D.O.S.', 'Veritas 005', 'Dirty Horse') then 'Premium Portfolio'
             when ho.beer_name in ('Pliny the Elder', 'Weihenstephaner Hefeweissbier', 'Two Hearted Ale') then 'Core Portfolio'
@@ -57,6 +60,7 @@ diversity_ranking as (
         dr.diversity_rank as rank,
         'style_diversity' as ranking_method,
         rc.review_count,
+        round(rc.avg_overall_rating, 3) as avg_overall_rating,
         case 
             when dr.beer_name in ('Rare D.O.S.', 'Veritas 005', 'Dirty Horse') then 'Premium Portfolio'
             when dr.beer_name in ('Pliny the Elder', 'Weihenstephaner Hefeweissbier', 'Two Hearted Ale') then 'Core Portfolio'
@@ -77,6 +81,7 @@ statistical_confidence_ranking as (
         sc.confidence_rank as rank,
         'statistical_confidence' as ranking_method,
         rc.review_count,
+        round(rc.avg_overall_rating, 3) as avg_overall_rating,
         case 
             when sc.beer_name in ('Rare D.O.S.', 'Veritas 005', 'Dirty Horse') then 'Premium Portfolio'
             when sc.beer_name in ('Pliny The Elder', 'Weihenstephaner Hefeweissbier', 'Two Hearted Ale') then 'Core Portfolio'
