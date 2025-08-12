@@ -25,11 +25,13 @@ def model(dbt, session):
     print(f"Analyzing {len(y):,} beer reviews")
     
     # Calculate regression coefficients: β = (X'X)⁻¹X'y
+    # This solves the normal equation to find optimal coefficients
     coefficients = np.linalg.lstsq(X_with_intercept, y, rcond=None)[0]
     intercept = coefficients[0]
     feature_coefficients = coefficients[1:]
     
     # Model performance
+    # Calculate R-squared to measure how well the model fits the data
     y_predicted = np.dot(X_with_intercept, coefficients)
     residuals = y - y_predicted
     ss_total = np.sum((y - np.mean(y)) ** 2)
@@ -39,15 +41,18 @@ def model(dbt, session):
     print(f"Model R²: {r_squared:.3f} ({r_squared*100:.1f}% variance explained)")
     
     # Standardized coefficients for importance ranking
+    # Standardize features to make coefficients comparable across different scales
     X_std = (X - np.mean(X, axis=0)) / np.std(X, axis=0)
     X_std_with_intercept = np.column_stack([np.ones(X_std.shape[0]), X_std])
     std_coefficients = np.linalg.lstsq(X_std_with_intercept, y, rcond=None)[0][1:]
     
     # Calculate importance percentages
+    # Convert absolute standardized coefficients to percentage importance
     abs_importance = np.abs(std_coefficients)
     importance_pct = (abs_importance / np.sum(abs_importance)) * 100
     
     # Standard errors and t-statistics
+    # Calculate statistical significance of each coefficient
     n, p = len(y), len(feature_coefficients)
     mse = ss_residual / (n - p - 1)
     XtX_inv = np.linalg.inv(np.dot(X_with_intercept.T, X_with_intercept))
@@ -55,6 +60,7 @@ def model(dbt, session):
     t_stats = coefficients / std_errors
     
     # Correlations for comparison
+    # Calculate simple correlations as baseline for feature importance
     correlations = np.corrcoef(X.T, y)[-1, :-1]
     
     # Build results
