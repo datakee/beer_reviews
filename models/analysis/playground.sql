@@ -23,6 +23,18 @@ beers as (
     from beer_data
     where brewery_name = 'Schorschbräu'
     group by 1,2
-)
+),
 
-select * from beers
+popular_beers as (
+    select
+        avg(review_overall) as avg_rating,
+        count(*) as review_count,
+        beer_name
+    from beer_data
+    group by 3)
+
+select 
+    *
+from popular_beers
+where beer_name ='Rare D.O.S.'
+order by avg_rating desc
